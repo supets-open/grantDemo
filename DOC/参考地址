@@ -1,0 +1,81 @@
+https://blog.csdn.net/u011200604/article/details/52874599
+Android6.0动态申请权限那些坑--以及避免用户选择不再提示后无法获取权限的问题
+https://www.jianshu.com/p/c02b9e7a4ae2
+Android 6.0运行时权限勾选不再询问后该如何处理？
+https://github.com/yjfnypeu/UpdatePlugin/issues/51
+在使用本项目做App版本更新时(应用上线半年多了，一直在使用本项目)，使用Android 8.0的手机测试发现一个问题：安装包下载完成之后，屏幕闪了一下并没有跳转到安装界面，使用8.0以下的手机并没有这个问题。
+原因：Android 8.0 Oreo 中，Google 移除掉了容易被滥用的“允许位置来源”应用的开关，在安装 Play Store 之外的第三方来源的 Android 应用的时候，竟然没有了“允许未知来源”的检查框，如果你还是想要安装某个被自己所信任的开发者的 app，则需要在每一次都手动授予“安装未知应用”的许可。
+适配Android 8.0：
+1.清单文件添加安装未知来源应用的权限 android.permission.REQUEST_INSTALL_PACKAGES
+
+2.下载好安装包后，安装程序之前验证是否有安装未知来源应用的权限
+
+安卓8.0 安装闪退的bug及解决方案
+
+public class MyActivity extends Activity {
+
+private static final int REQUEST_INSTALL = 124;
+private final UpdateBuilder builder = UpdateBuilder.create();
+
+@Override
+protected void onCreate(@Nullable Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	/**
+	 * 请在Application中进行UpdateConfig的全局配置
+	 */
+	builder.setInstallStrategy((context, s, update) -> {
+        if (Build.VERSION.SDK_INT < 26) {
+                //直接安装
+                new DefaultInstallStrategy().install(context, s, update);
+            } else if (getPackageManager().canRequestPackageInstalls()) {//26 版本才有此方法
+                //可以安装未知来源应用
+                new DefaultInstallStrategy().install(context, s, update);
+            } else {
+                //申请权限
+                if (ActivityCompat.shouldShowRequestPermissionRationale(MyActivity.this, Manifest.permission.REQUEST_INSTALL_PACKAGES)) {
+					//自定义的Dialog，可以用Android系统自带Dialog代替
+                    new MessageDialog.Builder(UMainActivity.this)
+                            .title("提示")
+                            .content("为了正常升级“预逍”APP,请允许“预逍”安装未知来源应用，本功能只限用于版本升级")
+                            .positiveText("确定")
+                            .negativeText("取消")
+                            .canceledOnTouchOutside(false)
+                            .cancelable(false)
+                            .onPositive((dialog, which) -> ActivityCompat.requestPermissions(MyActivity.this,
+                                    new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES},
+                                    REQUEST_INSTALL))
+                            .onNegative(((dialog, which) -> ActivityCompat.requestPermissions(MyActivity.this,
+                                    new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES},
+                                    REQUEST_INSTALL)))
+                            .show();
+                } else {
+                    ActivityCompat.requestPermissions(MyActivity.this,
+                            new String[]{Manifest.permission.REQUEST_INSTALL_PACKAGES},
+                            REQUEST_INSTALL);
+                }
+            }
+    });
+     builder.check();
+}
+
+@Override
+public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    if (requestCode == REQUEST_INSTALL) {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            builder.check();
+        } else {
+			//启动授权页面
+            Intent intent = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(intent, REQUEST_INSTALL);
+        }
+    }
+}
+
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode == REQUEST_INSTALL) {
+        builder.check();
+    }
+}
