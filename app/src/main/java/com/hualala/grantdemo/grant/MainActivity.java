@@ -1,4 +1,4 @@
-package com.hualala.grantdemo;
+package com.hualala.grantdemo.grant;
 
 import android.Manifest;
 import android.content.Intent;
@@ -10,6 +10,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
+
+import com.hualala.grantdemo.R;
 
 public class MainActivity extends AppCompatActivity implements PermissionInterface {
 

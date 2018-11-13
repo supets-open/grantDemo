@@ -1,4 +1,4 @@
-package com.hualala.grantdemo;
+package com.hualala.grantdemo.grant;
 
 /**
  * 权限请求接口
