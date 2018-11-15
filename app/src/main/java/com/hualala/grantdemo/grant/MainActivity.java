@@ -2,8 +2,12 @@ package com.hualala.grantdemo.grant;
 
 import android.Manifest;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,6 +17,8 @@ import android.widget.Toast;
 
 import com.hualala.grantdemo.R;
 
+import java.util.Hashtable;
+
 public class MainActivity extends AppCompatActivity implements PermissionInterface {
 
     private PermissionHelper mPermissionHelper;
@@ -21,6 +27,12 @@ public class MainActivity extends AppCompatActivity implements PermissionInterfa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        VideoView videoView = findViewById(R.id.player);
+//        videoView.setVideoURI(Uri.parse("https://caidanmao-recruit-test-1256963883.cos.ap-beijing.myqcloud.com/videos/clti9uhsaw"));
+//        videoView.start();
+//        // ((ImageView) findViewById(R.id.image)).setImageBitmap(createVideoThumbnail("https://caidanmao-recruit-test-1256963883.cos.ap-beijing.myqcloud.com/videos/qv5y9ipsgg", MediaStore.Images.Thumbnails.MINI_KIND));
+//        ((ImageView) findViewById(R.id.image)).setImageBitmap(createVideoThumbnail("https://caidanmao-recruit-test-1256963883.cos.ap-beijing.myqcloud.com/videos/clti9uhsaw", MediaStore.Images.Thumbnails.MINI_KIND));
 
         //初始化并发起权限申请
         mPermissionHelper = new PermissionHelper(this, this);
@@ -101,4 +113,56 @@ public class MainActivity extends AppCompatActivity implements PermissionInterfa
             }
         }
     }
+
+    public static Bitmap createVideoThumbnail(String filePath, int kind) {
+        Bitmap bitmap = null;
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        try {
+            if (filePath.startsWith("http://")
+                    || filePath.startsWith("https://")
+                    || filePath.startsWith("widevine://")) {
+                retriever.setDataSource(filePath, new Hashtable<String, String>());
+            } else {
+                retriever.setDataSource(filePath);
+            }
+            bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC); //retriever.getFrameAtTime(-1);
+        } catch (IllegalArgumentException ex) {
+            // Assume this is a corrupt video file
+            ex.printStackTrace();
+        } catch (RuntimeException ex) {
+            // Assume this is a corrupt video file.
+            ex.printStackTrace();
+        } finally {
+            try {
+                retriever.release();
+            } catch (RuntimeException ex) {
+                // Ignore failures while cleaning up.
+                ex.printStackTrace();
+            }
+        }
+
+        if (bitmap == null) {
+            return null;
+        }
+
+        if (kind == MediaStore.Images.Thumbnails.MINI_KIND) {//压缩图片 开始处
+            // Scale down the bitmap if it's too large.
+            int width = bitmap.getWidth();
+            int height = bitmap.getHeight();
+            int max = Math.max(width, height);
+            if (max > 512) {
+                float scale = 512f / max;
+                int w = Math.round(scale * width);
+                int h = Math.round(scale * height);
+                bitmap = Bitmap.createScaledBitmap(bitmap, w, h, true);
+            }//压缩图片 结束处
+        } else if (kind == MediaStore.Images.Thumbnails.MICRO_KIND) {
+            bitmap = ThumbnailUtils.extractThumbnail(bitmap,
+                    96,
+                    96,
+                    ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        }
+        return bitmap;
+    }
+
 }

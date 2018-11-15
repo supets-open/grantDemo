@@ -43,7 +43,7 @@ public class MainActivity2 extends AppCompatActivity {
                 //request()有参数ZbPermissionCallback且不为空的时候，权限回调的时候会调用响应的接口的方法。否则调用相应的注解方法
                 ZbPermission.with(MainActivity2.this)
                         .addRequestCode(REQUEST_CONTACT)
-                        .permissions(Manifest.permission.READ_CONTACTS, Manifest.permission.RECEIVE_SMS, Manifest.permission.WRITE_CONTACTS)
+                        .permissions(Manifest.permission_group.CALENDAR, Manifest.permission_group.LOCATION, Manifest.permission_group.PHONE)
                         .request(/*new ZbPermission.ZbPermissionCallback() {
                             @Override
                             public void permissionSuccess(int requestCode) {

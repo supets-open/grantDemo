@@ -26,15 +26,53 @@ import android.os.Build;
 
 public final class Permission {
 
-    public static final String[] CALENDAR;
-    public static final String[] CAMERA;
-    public static final String[] CONTACTS;
-    public static final String[] LOCATION;
-    public static final String[] MICROPHONE;
-    public static final String[] PHONE;
-    public static final String[] SENSORS;
-    public static final String[] SMS;
-    public static final String[] STORAGE;
+    //Normal Permissions
+    public static final String ACCESS_LOCATION_EXTRA_COMMANDS = Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS;
+    public static final String ACCESS_NETWORK_STATE = Manifest.permission.ACCESS_NETWORK_STATE;
+    public static final String ACCESS_NOTIFICATION_POLICY = Manifest.permission.ACCESS_NOTIFICATION_POLICY;
+    public static final String ACCESS_WIFI_STATE = Manifest.permission.ACCESS_WIFI_STATE;
+    public static final String BLUETOOTH = Manifest.permission.BLUETOOTH;
+    public static final String BLUETOOTH_ADMIN = Manifest.permission.BLUETOOTH_ADMIN;
+    public static final String BROADCAST_STICKY = Manifest.permission.BROADCAST_STICKY;
+    public static final String CHANGE_NETWORK_STATE = Manifest.permission.CHANGE_NETWORK_STATE;
+    public static final String CHANGE_WIFI_MULTICAST_STATE = Manifest.permission.CHANGE_WIFI_MULTICAST_STATE;
+    public static final String CHANGE_WIFI_STATE = Manifest.permission.CHANGE_WIFI_STATE;
+
+    public static final String DISABLE_KEYGUARD = Manifest.permission.DISABLE_KEYGUARD;
+    public static final String EXPAND_STATUS_BAR = Manifest.permission.EXPAND_STATUS_BAR;
+    public static final String GET_PACKAGE_SIZE = Manifest.permission.GET_PACKAGE_SIZE;
+    public static final String INTERNET = Manifest.permission.INTERNET;
+
+    public static final String KILL_BACKGROUND_PROCESSES = Manifest.permission.KILL_BACKGROUND_PROCESSES;
+    public static final String MODIFY_AUDIO_SETTINGS = Manifest.permission.MODIFY_AUDIO_SETTINGS;
+    public static final String NFC = Manifest.permission.NFC;
+    public static final String READ_SYNC_SETTINGS = Manifest.permission.READ_SYNC_SETTINGS;
+    public static final String READ_SYNC_STATS = Manifest.permission.READ_SYNC_STATS;
+
+
+    public static final String RECEIVE_BOOT_COMPLETED = Manifest.permission.RECEIVE_BOOT_COMPLETED;
+    public static final String REORDER_TASKS = Manifest.permission.REORDER_TASKS;
+    public static final String REQUEST_INSTALL_PACKAGES = Manifest.permission.REQUEST_INSTALL_PACKAGES;
+    public static final String SET_TIME_ZONE = Manifest.permission.SET_TIME_ZONE;
+    public static final String SET_WALLPAPER = Manifest.permission.SET_WALLPAPER;
+    public static final String SET_WALLPAPER_HINTS = Manifest.permission.SET_WALLPAPER_HINTS;
+
+    public static final String TRANSMIT_IR = Manifest.permission.TRANSMIT_IR;
+    public static final String USE_FINGERPRINT = Manifest.permission.USE_FINGERPRINT;
+    public static final String VIBRATE = Manifest.permission.VIBRATE;
+    public static final String WAKE_LOCK = Manifest.permission.WAKE_LOCK;
+    public static final String WRITE_SYNC_SETTINGS = Manifest.permission.WRITE_SYNC_SETTINGS;
+
+    //Dangerous Permissions
+    public static final String[] CALENDAR;//CALENDAR 日历组
+    public static final String[] CAMERA;//CAMERA 相机拍照组
+    public static final String[] CONTACTS;//CONTACTS 联系人组
+    public static final String[] LOCATION;//LOCATION 定位组
+    public static final String[] MICROPHONE;//MICROPHONE 麦克风组
+    public static final String[] PHONE;//PHONE 组
+    public static final String[] SENSORS;//SENSORS 传感器组
+    public static final String[] SMS;//SMS 组
+    public static final String[] STORAGE;//STORAGE 存储组
 
     static {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
